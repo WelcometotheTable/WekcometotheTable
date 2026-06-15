@@ -1,0 +1,65 @@
+<svg width="880" height="620" viewBox="0 0 880 620" xmlns="http://www.w3.org/2000/svg" font-family="'Syne','Plus Jakarta Sans',sans-serif">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="22%" r="90%">
+      <stop offset="0%" stop-color="#3a1640"/>
+      <stop offset="55%" stop-color="#1A0E1F"/>
+      <stop offset="100%" stop-color="#0e0712"/>
+    </radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD37A"/>
+      <stop offset="100%" stop-color="#F2A104"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="880" height="620" fill="url(#bg)"/>
+
+  <!-- ============ PRIMARY LOCKUP ============ -->
+  <g transform="translate(440,150)" text-anchor="middle">
+    <text y="-44" font-size="20" letter-spacing="11" fill="#F2A104" font-weight="700">W E L C O M E&#160;&#160;T O</text>
+    <!-- the mark: a place setting — plate on the table, your seat in coral -->
+    <g transform="translate(0,6)" filter="url(#glow)">
+      <line x1="-150" y1="34" x2="150" y2="34" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="30" fill="none" stroke="url(#gold)" stroke-width="4"/>
+      <circle cx="0" cy="0" r="9" fill="#FF5E5B"/>
+    </g>
+    <text y="150" font-size="92" font-weight="800" letter-spacing="-1" fill="url(#gold)" filter="url(#glow)">THE TABLE</text>
+    <text y="196" font-size="15" letter-spacing="5" fill="rgba(247,240,232,.62)" font-weight="500" font-family="'Space Mono',monospace">HOUSTON &#183; PULL UP A CHAIR</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="120" y1="392" x2="760" y2="392" stroke="rgba(247,240,232,.12)" stroke-width="1"/>
+
+  <!-- ============ APP ICON + COLORWAYS ============ -->
+  <g transform="translate(150,470)">
+    <rect x="-60" y="-60" width="120" height="120" rx="30" fill="#2A1430" stroke="rgba(247,240,232,.1)"/>
+    <g filter="url(#glow)">
+      <line x1="-34" y1="22" x2="34" y2="22" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="0" cy="2" r="22" fill="none" stroke="url(#gold)" stroke-width="5"/>
+      <circle cx="0" cy="2" r="7" fill="#FF5E5B"/>
+    </g>
+    <text x="0" y="90" text-anchor="middle" font-size="12" fill="rgba(247,240,232,.5)" font-family="'Space Mono',monospace">APP ICON</text>
+  </g>
+
+  <!-- reverse / mono -->
+  <g transform="translate(330,470)">
+    <rect x="-60" y="-60" width="120" height="120" rx="30" fill="#F2A104"/>
+    <line x1="-34" y1="22" x2="34" y2="22" stroke="#1A0E1F" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="0" cy="2" r="22" fill="none" stroke="#1A0E1F" stroke-width="5"/>
+    <circle cx="0" cy="2" r="7" fill="#1A0E1F"/>
+    <text x="0" y="90" text-anchor="middle" font-size="12" fill="rgba(247,240,232,.5)" font-family="'Space Mono',monospace">REVERSE</text>
+  </g>
+
+  <!-- palette chips -->
+  <g transform="translate(560,440)" font-family="'Space Mono',monospace" font-size="11">
+    <g><rect width="40" height="40" rx="8" fill="#1A0E1F" stroke="rgba(247,240,232,.15)"/><text x="50" y="16" fill="#F7F0E8">#1A0E1F</text><text x="50" y="32" fill="rgba(247,240,232,.5)">Plum-black</text></g>
+    <g transform="translate(0,52)"><rect width="40" height="40" rx="8" fill="#4A1942"/><text x="50" y="16" fill="#F7F0E8">#4A1942</text><text x="50" y="32" fill="rgba(247,240,232,.5)">Aubergine</text></g>
+    <g transform="translate(0,104)"><rect width="40" height="40" rx="8" fill="#F2A104"/><text x="50" y="16" fill="#F7F0E8">#F2A104</text><text x="50" y="32" fill="rgba(247,240,232,.5)">Marigold gold</text></g>
+    <g transform="translate(160,0)"><rect width="40" height="40" rx="8" fill="#FF5E5B"/><text x="50" y="16" fill="#F7F0E8">#FF5E5B</text><text x="50" y="32" fill="rgba(247,240,232,.5)">Persimmon</text></g>
+    <g transform="translate(160,52)"><rect width="40" height="40" rx="8" fill="#1FA67A"/><text x="50" y="16" fill="#F7F0E8">#1FA67A</text><text x="50" y="32" fill="rgba(247,240,232,.5)">Jade</text></g>
+    <g transform="translate(160,104)"><rect width="40" height="40" rx="8" fill="#F7F0E8"/><text x="50" y="16" fill="#F7F0E8">#F7F0E8</text><text x="50" y="32" fill="rgba(247,240,232,.5)">Bone</text></g>
+  </g>
+</svg>
