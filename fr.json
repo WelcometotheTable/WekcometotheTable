@@ -1,0 +1,20 @@
+/* Welcome to the Table — design tokens. Single source of truth, mirrors the mockup. */
+:root {
+  --ink: #1A0E1F;
+  --plum: #2A1430;
+  --aubergine: #4A1942;
+  --gold: #F2A104;
+  --gold-soft: #FFC65A;
+  --coral: #FF5E5B;
+  --jade: #1FA67A;
+  --bone: #F7F0E8;
+  --bone-dim: rgba(247, 240, 232, 0.62);
+  --line: rgba(247, 240, 232, 0.10);
+
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  --radius-card: 20px;
+  --radius-pill: 999px;
+}

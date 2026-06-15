@@ -1,0 +1,17 @@
+{
+  "app": { "name": "Bienvenue à la Table", "short": "La Table" },
+  "discover": {
+    "eyebrow": "Houston · Prenez place",
+    "tagline": "Trouvez des commerces afro-américains vérifiés près de vous, et les quartiers historiques qui les ont bâtis.",
+    "search": "Rechercher restaurants, boutiques, cuisine…",
+    "nearYou": "Près de vous",
+    "mapView": "Voir la carte",
+    "greaterHouston": "Grand Houston",
+    "greaterHoustonSub": "Pearland · Missouri City · Spring · Sugar Land",
+    "districts": "Black Wall Street",
+    "allDistricts": "Tous les quartiers"
+  },
+  "filters": { "all": "Tout", "restaurants": "Restaurants", "stores": "Boutiques", "openNow": "Ouvert", "verified": "Vérifiés", "welcome": "Accueillants" },
+  "badge": { "verified": "Vérifié", "community": "Vérifié par la communauté", "buzzing": "Tendance", "welcome": "Accueillant" },
+  "nav": { "discover": "Découvrir", "map": "Carte", "districts": "Quartiers", "saved": "Enregistrés", "profile": "Profil" }
+}

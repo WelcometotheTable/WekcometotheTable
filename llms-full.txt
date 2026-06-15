@@ -1,0 +1,17 @@
+{
+  "app": { "name": "Welcome to the Table", "short": "The Table" },
+  "discover": {
+    "eyebrow": "Houston · Pull up a chair",
+    "tagline": "Find verified Black-owned spots near you — and the historic districts that built them.",
+    "search": "Search restaurants, stores, soul food…",
+    "nearYou": "Near you",
+    "mapView": "Map view",
+    "greaterHouston": "Greater Houston",
+    "greaterHoustonSub": "Pearland · Missouri City · Spring · Sugar Land",
+    "districts": "Black Wall Street",
+    "allDistricts": "All districts"
+  },
+  "filters": { "all": "All", "restaurants": "Restaurants", "stores": "Stores", "openNow": "Open now", "verified": "Verified only", "welcome": "Welcoming" },
+  "badge": { "verified": "Verified", "community": "Community-verified", "buzzing": "Buzzing", "welcome": "Welcome" },
+  "nav": { "discover": "Discover", "map": "Map", "districts": "Districts", "saved": "Saved", "profile": "Profile" }
+}

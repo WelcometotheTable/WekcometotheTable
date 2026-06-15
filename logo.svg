@@ -1,0 +1,17 @@
+{
+  "app": { "name": "Bienvenido a la Mesa", "short": "La Mesa" },
+  "discover": {
+    "eyebrow": "Houston · Toma asiento",
+    "tagline": "Encuentra negocios afroamericanos verificados cerca de ti, y los distritos históricos que los crearon.",
+    "search": "Buscar restaurantes, tiendas, comida…",
+    "nearYou": "Cerca de ti",
+    "mapView": "Ver mapa",
+    "greaterHouston": "Gran Houston",
+    "greaterHoustonSub": "Pearland · Missouri City · Spring · Sugar Land",
+    "districts": "Black Wall Street",
+    "allDistricts": "Todos los distritos"
+  },
+  "filters": { "all": "Todos", "restaurants": "Restaurantes", "stores": "Tiendas", "openNow": "Abierto ahora", "verified": "Solo verificados", "welcome": "Acogedores" },
+  "badge": { "verified": "Verificado", "community": "Verificado por la comunidad", "buzzing": "En tendencia", "welcome": "Acogedor" },
+  "nav": { "discover": "Descubrir", "map": "Mapa", "districts": "Distritos", "saved": "Guardados", "profile": "Perfil" }
+}
