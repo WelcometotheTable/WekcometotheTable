@@ -5,6 +5,15 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#1A0E1F" />
+
+    <!-- PWA standalone on iOS/iPadOS + Android. Safari ignores the web manifest's
+         display/icons, so these are required for a real installed-app experience.
+         The <link rel="apple-touch-icon"> (PNG 180) is injected at build by
+         vite-plugin-pwa (pwaAssets, htmlPreset '2023'). -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="The Table" />
     <title>Welcome to the Table — Black-owned Houston</title>
     <meta
       name="description"

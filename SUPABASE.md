@@ -68,8 +68,9 @@ create policy "<name>" on <t> for select to anon, authenticated using (<predicat
   nothing more. No GRANT widening without a matching policy and a review.
 - **The Welcome badge is community testimony, not a safety guarantee.** Nothing
   in the schema labels any place or area as unsafe.
-- **`migrations/001_init.sql` is the source of truth** referenced by
-  `src/types/business.ts`. Keep the `Business` interface and the schema in sync.
+- **`supabase/migrations/20260621065454_init.sql` is the source of truth**
+  referenced by `src/types/business.ts`. Keep the `Business` interface and the
+  schema in sync.
 
 ## 5. Two leaks RLS does NOT stop
 
@@ -90,35 +91,78 @@ ERROR/WARN lints before considering the change done.
 
 ## 6. Operational gotchas (learned the hard way)
 
-### 6a. Migrations live in the WRONG place for the tooling
-The schema is at **`migrations/001_init.sql`**. The Supabase CLI and the MCP
-`db push` workflow only look in **`supabase/migrations/`** with timestamped
-names (`YYYYMMDDHHMMSS_name.sql`). There is **no `supabase/` dir and no
-`config.toml`** in this repo, so the standard `supabase db push` has nothing to
-act on. To use the standard workflow, create `supabase/config.toml` (linked to
-`epucdixgdakvsogdasyc`) and move/copy the SQL to
-`supabase/migrations/<timestamp>_init.sql`.
+### 6a. Migrations are now in the canonical CLI location
+The schema lives at **`supabase/migrations/20260621065454_init.sql`** — one
+complete migration, the source of truth. `supabase/config.toml` exists and the
+Supabase CLI is installed as a dev-dependency (`npx supabase`). The old
+`migrations/001_init.sql` location was removed (the CLI/`db push` only reads
+`supabase/migrations/`). **Authorize the CLI before pushing** — see 6e.
 
 ### 6b. The MCP `apply_migration` truncates large migrations
-Pushing the whole `001_init.sql` through a single `apply_migration` /
-`execute_sql` call **truncates and fails** — the large `$$`-dollar-quoted
-`nearby_businesses` function body is what trips it. **Do not push the whole file
-in one MCP call.** Instead either:
-- **Split into logical chunks** and apply each via `apply_migration`:
-  1. extension + enums + table + indexes
-  2. RLS enable/force + revoke + grant + policy
-  3. the `nearby_businesses` function (on its own) + its grant
-- **Or** use the Supabase CLI (`supabase db push`) / `psql` directly — these
-  stream the file properly. NOTE: `supabase`, `psql`, and `npx supabase` were all
-  **MISSING** in this Codespace; install before relying on them.
+This is why the schema was first applied in 3 chunks. Pushing the whole init
+file through a single `apply_migration` / `execute_sql` call **truncates and
+fails** — the large `$$`-dollar-quoted `nearby_businesses` function body is what
+trips it. **Never push the whole file in one MCP call.** Prefer the CLI
+(`supabase db push`, streams the file properly). If you must use MCP, split into
+chunks: (1) extension+enums+table+indexes, (2) RLS+revoke+grant+policy, (3) the
+function + its grant.
 
-### 6c. The live database may be empty
-As of last check the project had **0 migrations and 0 tables** — the schema had
-never been applied. If `list_tables` is empty, the app is pointed at an empty DB:
-apply the migration (per 6b) before debugging app data issues.
+### 6c. Schema is applied (as of 2026-06-21) — and NOT truncated
+The schema **has been applied** to `epucdixgdakvsogdasyc`. It was applied in three
+chunks (`init_01_table_and_enums`, `init_02_rls_grants_policy`,
+`init_03_nearby_businesses_rpc`) to dodge the MCP truncation bug — so the dashboard
+shows **3 migration records**, each a fragment; that is NOT data loss. Verified
+complete: `pg_get_functiondef(nearby_businesses)` returns the full function body,
+`get_advisors(security)` returns **0 lints**, table `businesses` exists with RLS
+forced, `anon`/`authenticated` have `SELECT` only, the candidate-excluding policy
+is live, and the RPC is `EXECUTE` for anon/authenticated (not public). **0 rows.**
+
+The local source is now a single complete file
+(`supabase/migrations/20260621065454_init.sql`, named to match the first deployed
+version). Once the CLI is authorized (6e), collapse the 3 remote records into it:
+```sh
+npx supabase migration repair --status reverted 20260621065501 20260621065513
+npx supabase migration list   # remote and local now both show only 20260621065454
+```
+`migration repair` only edits the migration-history table, not the schema — safe.
+
+### 6e. Authorizing the CLI (required before `db push`)
+The CLI is installed (dev-dependency, `npx supabase`) but **auth is interactive —
+the user must run it** (a token can't be hard-coded here):
+```sh
+npx supabase login                                   # opens browser / device flow
+npx supabase link --project-ref epucdixgdakvsogdasyc # prompts for DB password
+npx supabase migration list                          # confirm local ↔ remote sync
+```
+For CI / headless, set `SUPABASE_ACCESS_TOKEN` instead of `login`. After linking,
+`supabase db push` applies new `supabase/migrations/*.sql` files — properly streamed,
+no truncation. Never commit the access token or DB password.
 
 ### 6d. App env wiring
-`src/lib/supabase.ts` reads `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+`src/lib/supabase.ts` reads `VITE_SUPABASE_URL` and `VITE_SB_PUBLISHABLE_KEY`
 (fails loud if missing). `.env.example` ships them blank — fill `.env` with the
-project URL and the **publishable/anon** key (never the service key in the
-client).
+project URL and the **publishable** key (see section 7). Never put the secret key
+in the client.
+
+## 7. API keys — use the NEW publishable/secret keys (keys ≠ roles)
+
+The legacy API keys named `anon` and `service_role` are **deprecated** (they keep
+working until end of 2026, but don't build on them — Rule 6). Use the new keys:
+
+| Legacy key | New key | Format | Where |
+|---|---|---|---|
+| `anon` | **publishable** | `sb_publishable_…` | client/browser — `VITE_SB_PUBLISHABLE_KEY` |
+| `service_role` | **secret** | `sb_secret_…` | server/Edge Functions only — NEVER in client |
+
+- The publishable key has the **same low (anon-role) privileges** as the old anon
+  key, so RLS behaves identically. The secret key bypasses RLS, returns HTTP 401
+  if used in a browser, and is not a JWT.
+- **CRITICAL — keys are not roles.** This deprecation is ONLY about the
+  client-facing API keys. The Postgres **roles** `anon`, `authenticated`,
+  `service_role` are NOT deprecated — they're what every `grant`/`revoke`/RLS
+  policy in this repo targets, and the publishable key still authenticates *as*
+  the `anon` role. **Do not rewrite the migration SQL** when "removing deprecated
+  keys" — the role references in the init migration are correct and must stay.
+- This is a Vite SPA with no backend, so it only uses the publishable key. Get keys
+  from Dashboard → Settings → API Keys (publishable + secret tab). Source:
+  https://supabase.com/docs/guides/getting-started/api-keys

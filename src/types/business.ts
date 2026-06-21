@@ -1,5 +1,5 @@
-// Domain types — mirror the Supabase schema (migrations/001_init.sql).
-// Kept hand-authored and strict; regenerate from Supabase once the project exists.
+// Domain types — mirror the Supabase schema (supabase/migrations/20260621065454_init.sql).
+// Kept hand-authored and strict; regenerate with `npx supabase gen types typescript`.
 
 export type BusinessCategory = 'restaurant' | 'store';
 export type VerificationLevel = 'candidate' | 'community' | 'verified';

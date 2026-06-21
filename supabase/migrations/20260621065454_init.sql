@@ -8,8 +8,9 @@
 --    A table is only reachable by the `anon` role if it has BOTH:
 --      (a) an explicit GRANT to `anon`, AND
 --      (b) a row-level-security policy that permits the row.
---    We REVOKE defaults and grant the minimum surface, on purpose. Do not widen
---    a grant without a matching policy and a review.
+--    Supabase AUTO-GRANTS new public tables to anon/authenticated, so we REVOKE
+--    defaults first, then grant the minimum surface, on purpose. Do not widen a
+--    grant without a matching policy and a review. See SUPABASE.md.
 -- 2. `candidate` businesses are NEVER shown publicly (mirrors badges.tsx).
 -- 3. Ownership is community-verified. No row reaches `verified` on AI's word
 --    alone — that transition is a privileged (service-role) operation.
@@ -53,11 +54,11 @@ alter table businesses enable row level security;
 -- Force RLS so even the table owner is subject to policies (defense in depth).
 alter table businesses force row level security;
 
--- Explicit, minimal grants. Nothing is public until both this GRANT and a
--- policy below allow it. anon + authenticated may READ ONLY.
+-- Explicit, minimal grants. Cancel Supabase's default auto-grant, then grant
+-- read-only. Nothing is public until both this GRANT and the policy below allow it.
 revoke all on businesses from anon, authenticated;
 grant select on businesses to anon, authenticated;
--- Writes are service-role only (bypasses RLS via the service key, server-side).
+-- Writes are service-role only (bypasses RLS via the secret/service key, server-side).
 
 -- Public read policy: candidates are never exposed publicly.
 create policy "public reads non-candidate businesses"

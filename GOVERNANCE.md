@@ -10,8 +10,8 @@ Non-negotiable rules for Welcome to the Table. Code and database must respect th
   function is exposed over the public (PostgREST) API only when there is **both**
   an explicit `GRANT` to the `anon` role **and** a row-level-security policy that
   admits the row. We never rely on implicit exposure. See
-  [`migrations/001_init.sql`](migrations/001_init.sql) and, for the full model and
-  ops notes, [`SUPABASE.md`](SUPABASE.md).
+  [`supabase/migrations/20260621065454_init.sql`](supabase/migrations/20260621065454_init.sql)
+  and, for the full model and ops notes, [`SUPABASE.md`](SUPABASE.md).
 - **Least privilege.** `anon` and `authenticated` get `SELECT` only. All writes
   (insert/update/delete, and any promotion of `verification_status`) are
   service-role operations performed server-side, never from the client.
@@ -31,10 +31,13 @@ Non-negotiable rules for Welcome to the Table. Code and database must respect th
 
 ## Applying the schema
 
-The migration is recorded in the repo but **not** auto-applied to any live
-project. Apply it deliberately:
+The migration lives at `supabase/migrations/20260621065454_init.sql` and is
+**already applied** to the live project (`epucdixgdakvsogdasyc`). Future changes go
+through the authorized Supabase CLI:
 
 ```bash
-# Supabase CLI (rename into supabase/migrations/ with a timestamp first), or
-psql "$DATABASE_URL" -f migrations/001_init.sql
+npx supabase db push   # applies new supabase/migrations/*.sql (no MCP truncation)
 ```
+
+CLI authorization and migration-history reconciliation are documented in
+[`SUPABASE.md`](SUPABASE.md) §6e / §6c.

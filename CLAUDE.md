@@ -2,19 +2,29 @@
 
 Guidance for Claude Code working in this repo.
 
+**Start each session by reading [`PROJECT_STATE.md`](PROJECT_STATE.md)** — the living
+status + task tracker (what's done, what's left, where we are). Keep it current as you work.
+
 ## Before touching the database
 
 **Read [`SUPABASE.md`](SUPABASE.md) first.** It is the source of truth for the
 Supabase access model (GRANT + RLS), the project-specific governance rules, and
-the operational gotchas (migrations live in `migrations/` not `supabase/`; the
-MCP `apply_migration` truncates the large init migration — split it; the live DB
-may be empty). Do not write a migration or run a Supabase MCP/CLI command without
-it.
+the operational gotchas (canonical migration is
+`supabase/migrations/20260621065454_init.sql`; MCP `apply_migration` truncates the
+large init migration — prefer the CLI; authorize the CLI before `db push` — see
+SUPABASE.md §6e). Do not write a migration or run a Supabase MCP/CLI command without it.
 
 Key rule to never forget: **Supabase auto-grants `anon`/`authenticated` on new
 `public` tables — you must explicitly `REVOKE` then `GRANT` to get
 deny-by-default.** "Nothing is public by default" is only true *after* you
 REVOKE.
+
+API keys: use the **new** keys — publishable (`sb_publishable_…`, client, via
+`VITE_SB_PUBLISHABLE_KEY`) and secret (`sb_secret_…`, server-only, never in the
+client). Legacy `anon`/`service_role` *keys* are deprecated. But the Postgres
+*roles* `anon`/`authenticated`/`service_role` are NOT deprecated — they're what
+the migration SQL grants to; never rewrite that SQL when swapping keys. See
+SUPABASE.md §7.
 
 See also [`GOVERNANCE.md`](GOVERNANCE.md) for the non-negotiable product rules.
 
@@ -58,11 +68,15 @@ about to take, the rule wins.
    APIs, or patterns. Use current, supported versions and current APIs. If you hit a
    deprecation warning, resolve it — don't suppress it. Check before adding a dep.
 
-7. **Build tests, not mocks.** Write real tests that exercise real behavior against
-   the real system (or a real local Supabase/db) wherever feasible. Do not mock away
-   the thing under test to make a test pass. A test that mocks the behavior it claims
-   to verify is worse than no test. Prefer integration/E2E coverage for data-access
-   and API paths.
+7. **Build tests, not mocks — and they pass 100%.** Write real tests that exercise
+   real behavior against the real system (or a real local Supabase/db) wherever
+   feasible. Do not mock away the thing under test to make a test pass. A test that
+   mocks the behavior it claims to verify is worse than no test. Prefer
+   integration/E2E coverage for data-access and API paths. **The suite must pass
+   100% — zero failures and zero skipped tests.** No `.skip`, `.only`, `xit`,
+   `it.todo`, commented-out tests, or `--passWithNoTests` masking. A skipped test is
+   a hidden failure; if a test can't pass yet, fix the code or the test — do not
+   skip it. "Tests pass" means the whole suite, green, with nothing excluded.
 
 8. **AEO and SEO are first-class.** Every user-facing page must be optimized for
    both search engines (SEO) and answer engines / LLM crawlers (AEO): correct
@@ -108,8 +122,8 @@ it, don't just memorize the rule.
 |---|---|---|
 | Create a table and assume it's private because "Supabase is deny-by-default." | `enable`+`force` RLS, then `revoke all from anon, authenticated`, then minimal `grant`, then a policy. | Supabase **auto-grants** new `public` tables to `anon`/`authenticated`. Skipping the REVOKE leaves the table exposed with RLS as the only guard — a silent data leak. See `SUPABASE.md`. |
 | "Fix" missing data by widening a GRANT or disabling RLS. | Diagnose the **policy**; an empty result usually means RLS is working. Keep grants minimal. | The grant isn't the bug — the policy is. Widening access to make data appear is how `candidate` rows or private data get exposed. Governance forbids it. |
-| Push the whole `001_init.sql` through one MCP `apply_migration` call. | Split into chunks (extensions+enums+table+indexes / RLS+grants+policy / the function), or use CLI/`psql`. | The single call **truncates** on the large `$$` function body and silently fails. Chunking is the known-good path. |
-| Put a new migration anywhere, or run `supabase db push` and assume it worked. | Use `migrations/` as the source of truth; for CLI, add `supabase/config.toml` + timestamped file under `supabase/migrations/`. Verify with `list_migrations`/`list_tables`. | The tooling only reads `supabase/migrations/`. There's no `config.toml`, so `db push` no-ops — "success" with zero effect. Always verify against the live DB. |
+| Push the whole init migration through one MCP `apply_migration` call. | Use the authorized CLI (`supabase db push`); if forced to use MCP, split into chunks (table / RLS+grants / function). | The single call **truncates** on the large `$$` function body and silently fails. The CLI streams it correctly. |
+| Put a new migration anywhere, or run `supabase db push` and assume it worked. | Put it in `supabase/migrations/<timestamp>_*.sql`; authorize the CLI first (SUPABASE.md §6e). Verify with `migration list` / `list_tables`. | The tooling only reads `supabase/migrations/`. An unauthorized/unlinked CLI can't push. Always verify against the live DB. |
 | Assert an API signature, schema column, or library behavior from memory. | Read the actual file / run `list_tables` / search the official docs first. | Training memory drifts and Supabase auto-grant behavior is counterintuitive. Guessing produces confident, wrong code. Verify, then act. |
 | Edit a file after reading only the relevant lines. | Read the whole file (and related docs) before editing. | Partial reads miss invariants, existing helpers, and side effects — causing duplicate logic or broken assumptions. Rule 3. |
 | Mark the task done with a `TODO`, stub, or "wire up later" remaining. | Finish it end-to-end, or state explicitly and precisely what remains. | "Done" that isn't done costs a second pass — there's time to do it right, not twice (Rules 1–2). Hidden stubs ship as bugs. |
