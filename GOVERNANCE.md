@@ -4,10 +4,14 @@ Non-negotiable rules for Welcome to the Table. Code and database must respect th
 
 ## Data access (Supabase / Postgres)
 
-- **Nothing is public by default.** Supabase exposes a table or function over the
-  public (PostgREST) API only when there is **both** an explicit `GRANT` to the
-  `anon` role **and** a row-level-security policy that admits the row. We never
-  rely on implicit exposure. See [`migrations/001_init.sql`](migrations/001_init.sql).
+- **Deny by default — but only because we REVOKE.** Supabase *auto-grants*
+  `anon`/`authenticated` on new `public` tables, so a table is NOT private until
+  we explicitly `revoke all` then `grant` the minimum. Once revoked, a table or
+  function is exposed over the public (PostgREST) API only when there is **both**
+  an explicit `GRANT` to the `anon` role **and** a row-level-security policy that
+  admits the row. We never rely on implicit exposure. See
+  [`migrations/001_init.sql`](migrations/001_init.sql) and, for the full model and
+  ops notes, [`SUPABASE.md`](SUPABASE.md).
 - **Least privilege.** `anon` and `authenticated` get `SELECT` only. All writes
   (insert/update/delete, and any promotion of `verification_status`) are
   service-role operations performed server-side, never from the client.
