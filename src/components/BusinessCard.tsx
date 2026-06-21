@@ -1,5 +1,5 @@
 import type { Business } from '../types/business.ts';
-import { VerificationBadge, WelcomeBadge, BuzzingBadge } from './badges.tsx';
+import { VerificationBadge, WelcomeBadge, BuzzingBadge, BlackOwnedBadge } from './badges.tsx';
 import './BusinessCard.css';
 
 const THUMB_TINTS = ['thumb--1', 'thumb--2', 'thumb--3', 'thumb--4'] as const;
@@ -16,12 +16,16 @@ export function BusinessCard({ business, index }: { business: Business; index: n
             <span className="card__dist">{business.distanceMiles.toFixed(1)} mi</span>
           )}
         </div>
+        {business.neighborhood && (
+          <p className="card__hood">{business.neighborhood}</p>
+        )}
         <div className="card__tags">
           {business.subtype.map((s) => (
             <span key={s} className="card__tag">{s}</span>
           ))}
         </div>
         <div className="card__badges">
+          {business.blackOwned && <BlackOwnedBadge />}
           <VerificationBadge level={business.verificationStatus} />
           {business.buzzing && <BuzzingBadge />}
           {business.welcomeBadge && <WelcomeBadge />}

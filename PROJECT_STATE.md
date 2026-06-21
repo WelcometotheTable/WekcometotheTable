@@ -28,9 +28,9 @@ French. Verification is community-attested; AI never auto-publishes.
 | Build / typecheck | ✅ Green | `npm run build`, `tsc -b --noEmit` pass. |
 | DB schema | ✅ Applied & verified | 3 migrations on `epucdixgdakvsogdasyc`, 0 advisor lints, deny-by-default proven. |
 | DB governance docs + hooks | ✅ Done | SUPABASE.md, GOVERNANCE.md, CLAUDE.md, 4 enforcement hooks (proven firing). |
-| App ↔ Supabase wiring | 🟡 Code ready, unconfigured | Uses new `VITE_SB_PUBLISHABLE_KEY`; `.env` still blank. |
-| Seed data | ⛔ Not started | `businesses` table has 0 rows. |
-| **Test infrastructure** | ⛔ **Not started (top blocker)** | No Vitest, no `test` script, no tests. The "tests pass 100%" rule has nothing to run yet. |
+| App ↔ Supabase wiring | ✅ Done & verified | `Discover.tsx` reads live via `fetchBusinesses()`; loading/error/empty states; `.env` configured. Public read path proven (8 rows via publishable key + RLS). |
+| Seed data | ✅ Done | 8 real, cited Houston businesses (7 Black-owned) in `supabase/seed.sql` + live DB. Coords geocoded, none fabricated. |
+| Test infrastructure | 🟡 Started | Vitest installed + `test` script + first real test (`businessMap` mapper, 4 pass, no mocks). Expand to data-access + components next. |
 | PWA installability | ✅ Done & verified | Real PNG icons (192/512/maskable) + apple-touch + iOS meta. Installable on iPhone/iPad/Android/Samsung/Windows. Build-verified. |
 | Web Push (VAPID) | ⛔ Not started | Env scaffolded; needs custom SW + subscriptions table + sender. See §4. |
 | Anthropic / Claude AI layer | ⛔ Not started | Architecture decided (see §4); not built. |
@@ -42,15 +42,13 @@ Legend: ✅ done & verified · 🟡 in progress / partial · ⛔ not started · 
 ## 3. Task tracker
 
 ### Now / next
-- [ ] **Set up test infrastructure (Vitest).** Add `vitest` + `@testing-library/react`,
-  a `test` script, and first real tests for `src/lib/supabase.ts` and the data layer.
-  Until this exists, Rule 7 ("tests pass 100%, no skips") is unenforceable. **Highest
-  priority** — blocks meaningful "done."
-- [ ] **Fill `.env`** with real `VITE_SUPABASE_URL` + `VITE_SB_PUBLISHABLE_KEY`
-  (publishable key from Dashboard → Settings → API Keys). Can fetch URL + publishable
-  key via Supabase MCP on request.
-- [ ] **Seed `businesses`.** Write a seed migration from `src/data/sampleBusinesses.ts`
-  (candidates stay hidden by the RLS policy, as designed).
+- [ ] **Eyeball the running app** (`npm run dev`) — code path is fully verified (test +
+  build + live API returns 8 rows), but no human has *visually* confirmed the render yet.
+- [ ] **Expand test coverage** — add `@testing-library/react` + jsdom for component tests
+  (BusinessCard, Discover states), and an optional guarded integration test of `fetchBusinesses`.
+- [ ] **Expand the catalog** — geocode + add more cited spots (Sunshine's didn't resolve;
+  add trending non-Black-owned spots too). Update `nearby_businesses` RPC to return the new
+  columns (via CLI `db push`, not MCP — avoids truncation).
 
 ### Web Push / VAPID (see §4 for architecture)
 - [ ] Generate VAPID keypair (`npx web-push generate-vapid-keys`); set `VAPID_PRIVATE_KEY`
@@ -90,6 +88,11 @@ Legend: ✅ done & verified · 🟡 in progress / partial · ⛔ not started · 
 - [x] Made the PWA truly installable cross-device: generated PNG icons (64/192/512 + maskable
   + apple-touch-180 + favicon) from `icon.svg` via `@vite-pwa/assets-generator`; added iOS
   standalone meta; manifest `id`/`categories`/`orientation`. Build-verified.
+- [x] Recalibrated governance to consumer-grade (HIPAA-strictness was overkill): cited public
+  listings seed visible as `community`; kept the security baseline.
+- [x] Broadened schema (`black_owned`, `neighborhood`, `source_url`, `image_url`); seeded 8 real
+  cited businesses; wired `Discover.tsx` to Supabase with loading/error/empty + a Black-owned
+  badge & filter; stood up Vitest (4 tests pass). Verified end-to-end via the public API.
 
 ## 4. Architecture decisions
 

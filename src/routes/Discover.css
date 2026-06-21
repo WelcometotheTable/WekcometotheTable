@@ -42,3 +42,6 @@
 .discover__sec a { font-family: var(--font-mono); font-size: 11px; color: var(--gold); }
 
 .discover__list { display: flex; flex-direction: column; gap: 13px; padding: 0 20px; }
+
+.discover__state { padding: 24px 20px; color: var(--bone-dim); font-family: var(--font-mono); font-size: 13px; }
+.discover__state--error { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; color: var(--coral); }

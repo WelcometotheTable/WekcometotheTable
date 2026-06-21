@@ -20,6 +20,14 @@ export interface Business {
   readonly welcomeBadge: boolean;
   /** Trending from social signal + review velocity. Trending is never a substitute for verification. */
   readonly buzzing: boolean;
+  /** First-class identifier for Black-owned businesses (badge + filter). Backed by sourceUrl. */
+  readonly blackOwned: boolean;
+  /** Neighborhood / district (e.g. "Third Ward", "Midtown"). Filter dimension. */
+  readonly neighborhood: string | null;
+  /** Provenance for the listing / the blackOwned claim — a cited public source. */
+  readonly sourceUrl: string | null;
+  /** Listing photo. Nullable until the licensed-image source (e.g. Google Places) is wired. */
+  readonly imageUrl: string | null;
   /** Miles from the query point; present only on results from nearby_businesses(). */
   readonly distanceMiles: number | null;
 }

@@ -14,6 +14,7 @@
 .card__row1 { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
 .card__name { font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.1; }
 .card__dist { font-family: var(--font-mono); font-size: 11px; color: var(--gold); white-space: nowrap; flex: none; margin-top: 2px; }
+.card__hood { font-family: var(--font-mono); font-size: 11px; color: var(--bone-dim); margin: 3px 0 0; }
 .card__tags { display: flex; gap: 5px; flex-wrap: wrap; margin: 7px 0 9px; }
 .card__tag {
   font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .04em;

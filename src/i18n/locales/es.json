@@ -9,9 +9,13 @@
     "greaterHouston": "Gran Houston",
     "greaterHoustonSub": "Pearland · Missouri City · Spring · Sugar Land",
     "districts": "Black Wall Street",
-    "allDistricts": "Todos los distritos"
+    "allDistricts": "Todos los distritos",
+    "loading": "Buscando lugares cerca de ti…",
+    "error": "No se pudieron cargar los lugares. Revisa tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar",
+    "empty": "Aún no hay lugares que coincidan."
   },
-  "filters": { "all": "Todos", "restaurants": "Restaurantes", "stores": "Tiendas", "openNow": "Abierto ahora", "verified": "Solo verificados", "welcome": "Acogedores" },
-  "badge": { "verified": "Verificado", "community": "Verificado por la comunidad", "buzzing": "En tendencia", "welcome": "Acogedor" },
+  "filters": { "all": "Todos", "blackOwned": "Afroamericanos", "restaurants": "Restaurantes", "stores": "Tiendas", "openNow": "Abierto ahora", "verified": "Solo verificados", "welcome": "Acogedores" },
+  "badge": { "verified": "Verificado", "community": "Verificado por la comunidad", "buzzing": "En tendencia", "welcome": "Acogedor", "blackOwned": "Afroamericano" },
   "nav": { "discover": "Descubrir", "map": "Mapa", "districts": "Distritos", "saved": "Guardados", "profile": "Perfil" }
 }

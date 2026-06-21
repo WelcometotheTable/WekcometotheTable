@@ -22,10 +22,17 @@ Non-negotiable rules for Welcome to the Table. Code and database must respect th
 
 ## Listing integrity
 
-- **Candidates are never shown publicly.** Only `community` and `verified`
-  rows are returned to clients (enforced by RLS policy, mirrored in `badges.tsx`).
-- **AI never auto-publishes.** A business reaches `verified` only via an owner
-  claim or 3+ independent community confirmations — a privileged transition.
+> Rigor calibrated to a **public consumer directory** — names/addresses are public
+> info, not PHI. Keep the security baseline above; the publishing workflow is light.
+
+- **`candidate` = unvetted submissions** (e.g. raw user adds), hidden by RLS until
+  reviewed. `community` and `verified` rows are public.
+- **Real, cited listings may be seeded as `community` (visible).** Automated/AI
+  ingestion of publicly-documented businesses is fine — store a `source_url` for the
+  claim (especially the `black_owned` flag). This is reasonable diligence, not a
+  verification ceremony.
+- **`verified` means owner-confirmed** (an owner claim, or strong community
+  confirmation) — a meaningful, privileged step above `community`. Reserve it.
 - **The Welcome badge is community testimony, not a safety guarantee.** Nothing
   in the product labels any place or area as unsafe.
 

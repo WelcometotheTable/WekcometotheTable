@@ -32,3 +32,13 @@ export function BuzzingBadge() {
   const { t } = useTranslation();
   return <span className="badge badge--buzzing">🔥 {t('badge.buzzing')}</span>;
 }
+
+export function BlackOwnedBadge() {
+  const { t } = useTranslation();
+  return (
+    <span className="badge badge--blackowned">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 13.2a7.2 7.2 0 0 1-5-2c.1-1.6 3.3-2.5 5-2.5s4.9.9 5 2.5a7.2 7.2 0 0 1-5 2z" /></svg>
+      {t('badge.blackOwned')}
+    </span>
+  );
+}

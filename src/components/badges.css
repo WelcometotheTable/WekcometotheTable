@@ -11,3 +11,6 @@
 .badge--community svg { fill: var(--gold); }
 .badge--buzzing { background: rgba(255,94,91,.16); color: var(--coral); }
 .badge--welcome { background: rgba(31,166,122,.14); color: var(--jade); border: 1px solid rgba(31,166,122,.30); }
+/* Black-owned: a featured identity badge — richer than the translucent status badges. */
+.badge--blackowned { background: var(--aubergine); color: var(--gold-soft); border: 1px solid rgba(255,198,90,.35); }
+.badge--blackowned svg { fill: var(--gold-soft); }

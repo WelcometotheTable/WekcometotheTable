@@ -1,18 +1,44 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SUPPORTED_LOCALES, type Locale } from '../i18n/index.ts';
-import { sampleBusinesses } from '../data/sampleBusinesses.ts';
+import type { Business } from '../types/business.ts';
+import { fetchBusinesses } from '../lib/businesses.ts';
 import { BusinessCard } from '../components/BusinessCard.tsx';
 import './Discover.css';
+
+type LoadState =
+  | { status: 'loading' }
+  | { status: 'error'; message: string }
+  | { status: 'ready'; businesses: readonly Business[] };
 
 export function Discover() {
   const { t, i18n } = useTranslation();
   const [greaterHouston, setGreaterHouston] = useState(false);
+  const [blackOwnedOnly, setBlackOwnedOnly] = useState(false);
+  const [state, setState] = useState<LoadState>({ status: 'loading' });
+
+  const load = useCallback(() => {
+    let active = true;
+    setState({ status: 'loading' });
+    fetchBusinesses()
+      .then((businesses) => { if (active) setState({ status: 'ready', businesses }); })
+      .catch((err: unknown) => {
+        if (active) setState({ status: 'error', message: err instanceof Error ? err.message : String(err) });
+      });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => load(), [load]);
 
   function switchLocale(locale: Locale): void {
     void i18n.changeLanguage(locale);
     localStorage.setItem('locale', locale);
   }
+
+  const visible = useMemo(() => {
+    if (state.status !== 'ready') return [];
+    return blackOwnedOnly ? state.businesses.filter((b) => b.blackOwned) : state.businesses;
+  }, [state, blackOwnedOnly]);
 
   return (
     <div className="discover">
@@ -47,11 +73,23 @@ export function Discover() {
       </div>
 
       <div className="discover__chips" role="group" aria-label="Filters">
-        <button className="chip on">{t('filters.all')}</button>
+        <button
+          className={`chip ${blackOwnedOnly ? '' : 'on'}`}
+          aria-pressed={!blackOwnedOnly}
+          onClick={() => { setBlackOwnedOnly(false); }}
+        >
+          {t('filters.all')}
+        </button>
+        <button
+          className={`chip ${blackOwnedOnly ? 'on' : ''}`}
+          aria-pressed={blackOwnedOnly}
+          onClick={() => { setBlackOwnedOnly(true); }}
+        >
+          {t('filters.blackOwned')}
+        </button>
         <button className="chip">{t('filters.restaurants')}</button>
         <button className="chip">{t('filters.stores')}</button>
         <button className="chip">{t('filters.openNow')}</button>
-        <button className="chip">{t('filters.verified')}</button>
         <button className="chip">{t('filters.welcome')}</button>
       </div>
 
@@ -74,11 +112,28 @@ export function Discover() {
         <a href="#map">{t('discover.mapView')} →</a>
       </div>
 
-      <div className="discover__list">
-        {sampleBusinesses.map((b, i) => (
-          <BusinessCard key={b.id} business={b} index={i} />
-        ))}
-      </div>
+      {state.status === 'loading' && (
+        <p className="discover__state" role="status">{t('discover.loading')}</p>
+      )}
+
+      {state.status === 'error' && (
+        <div className="discover__state discover__state--error" role="alert">
+          <p>{t('discover.error')}</p>
+          <button className="chip" onClick={load}>{t('discover.retry')}</button>
+        </div>
+      )}
+
+      {state.status === 'ready' && visible.length === 0 && (
+        <p className="discover__state">{t('discover.empty')}</p>
+      )}
+
+      {state.status === 'ready' && visible.length > 0 && (
+        <div className="discover__list">
+          {visible.map((b, i) => (
+            <BusinessCard key={b.id} business={b} index={i} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
